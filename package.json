@@ -1,0 +1,35 @@
+{
+  "name": "covid-dashboard",
+  "version": "1.0.0",
+  "description": "A vue app to show stats about COVID-19 at CU Boulder",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "BUILD_PATH=/profiles/express/libraries/vue/dist/ webpack --config webpack.prod.js",
+    "start": "BUILD_PATH=/ webpack-dev-server --open --config webpack.dev.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.1",
+    "@babel/preset-env": "^7.11.0",
+    "@vue/compiler-sfc": "^3.0.0-beta.4",
+    "babel-loader": "^8.1.0",
+    "core-js": "^3.6.5",
+    "css-loader": "^4.2.1",
+    "html-webpack-plugin": "^4.3.0",
+    "mini-css-extract-plugin": "^0.11.0",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^10.0.1",
+    "style-loader": "^1.2.1",
+    "vue": "^3.0.0-rc.5",
+    "vue-loader": "^16.0.0-beta.4",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.1.1"
+  },
+  "dependencies": {
+    "chart.js": "^2.9.3"
+  },
+  "author": "SRC Web Team",
+  "license": "ISC"
+}
