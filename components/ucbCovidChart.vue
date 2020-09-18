@@ -16,7 +16,7 @@
             <div class="ucb-wc-child" v-else> 
                 <h3> Cumulative Total </h3> 
                 <p class="supersize"> {{stats.cumulativeTotal}} </p> 
-                <p> August 24 - Present </p>0
+                <p> August 24 - Present </p>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@ export default {
     name: 'ucbCovidChart',
     props:{
         dataOption: String,
-        data: Object
+        state: Object,
     },
     setup(props){
         const option = ref(null);
@@ -45,37 +45,23 @@ export default {
         // format data and render the bar chart
         // @param {data} the response to sort
         function renderChart(data){
-            let date = new Date().toLocaleDateString(); // mm/dd/yyyy
-            date = date.replaceAll('/', '-'); // format date to mm-dd-yyyy
-            let y = date.slice(-2); // last 2 digits of the year
-            date = date.slice(0,5) + y; // mm-dd-yy
-            let weekSummary, weekOf, daysOnGraph;
-            weekSummary = weekOf = daysOnGraph = 0;
-            for(let i=0; i< data.feed.entry.length; i++){
-                if(data.feed.entry[i].gsx$date.$t === date){
-                    weekOf = Math.floor(i/7) + 1;
-                    weekSummary = (weekOf * 8) - 3; // index of the array that has the Week X summary row
-                    daysOnGraph = 5 - (weekSummary - i - 1);
-                    //console.log('Index is %d, Week of: %d, Weekly Summary Row Index: %d, # of days to graph: %d ', i, weekOf, weekSummary, daysOnGraph);
-                    let prev = (i - daysOnGraph +1);
-                    // only show 5 days at a time (M-F)
-                    for(let j=1; j<6; j++){
-                        if(j<= daysOnGraph){
-                            // Add the data that exists
-                            entries.data.push(+(data.feed.entry[prev])[option.value].$t);
-                            entries.labels.push(data.feed.entry[prev].gsx$date.$t);
-                            stats.weekTotal = stats.weekTotal + (+(data.feed.entry[prev])[option.value].$t);
-                            stats.lastDayTotal = +(data.feed.entry[i])[option.value].$t;
-                        }
-                        else{
-                            // show no data for future dates
-                            entries.data.push(0);
-                            entries.labels.push(data.feed.entry[i+(j - daysOnGraph)].gsx$date.$t);
-                        }
-                        prev++;
-                    }
-                    break;
+            let {weekOf, weekSummary, daysOnGraph, index} = props.state;
+            let prev = (index - daysOnGraph +1);
+            // only show 5 days at a time (M-F)
+            for(let j=1; j<6; j++){
+                if(j<= daysOnGraph){
+                    // Add the data that exists
+                    entries.data.push(+(data.feed.entry[prev])[option.value].$t);
+                    entries.labels.push(data.feed.entry[prev].gsx$date.$t);
+                    stats.weekTotal = stats.weekTotal + (+(data.feed.entry[prev])[option.value].$t);
+                    stats.lastDayTotal = +(data.feed.entry[index])[option.value].$t;
                 }
+                else{
+                    // show no data for future dates
+                    entries.data.push(0);
+                    entries.labels.push(data.feed.entry[index+(j - daysOnGraph)].gsx$date.$t);
+                }
+                prev++;
             }
             // calculate the overall totals
             for(let k = 1; k<=weekOf; k++){
@@ -147,7 +133,7 @@ export default {
         });
 
         onMounted(() => {
-            renderChart(props.data);
+            renderChart(props.state.data);
         });
 
         return {stats, entries, option}
