@@ -1,6 +1,7 @@
 <template>
 <h1>
-    Totals by Week - <em>as of {{ state.today }} </em>
+    Totals by Week -
+    <em>as of {{ state.today }}</em>
 </h1>
 <p>Testing branch setup...</p>
 <table class="ucb-weekly-table">
@@ -12,8 +13,8 @@
             <th>PCR Diagnostic Tests</th>
             <th>Positive On-Campus PCR Diagnostic Tests</th>
         </tr>
-    <tbody>
-    </tbody>
+    </thead>
+    <tbody></tbody>
     <tfoot>
         <tr>
             <th>Grand Total</th>
@@ -23,7 +24,6 @@
             <th></th>
         </tr>
     </tfoot>
-    </thead>
 </table>
 </template>
 
