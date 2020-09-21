@@ -1,17 +1,17 @@
 <template>
-    <h1> Weekly totals </h1>
+<h1>Weekly Totals</h1>
 </template>
+
 <script>
 export default {
-    name: 'weeklyTotals',
-    props:{
-        state: Object
+    name: "weeklyTotals",
+    props: {
+        state: Object,
     },
-    setup(props){
+    setup(props) {
         return;
-    }
-}
+    },
+};
 </script>
-<style scoped>
 
-</style>
+<style scoped></style>
