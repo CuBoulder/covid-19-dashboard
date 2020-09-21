@@ -1,5 +1,6 @@
 <template>
 <h1>Weekly Totals</h1>
+<p>Testing branch setup...</p>
 </template>
 
 <script>
