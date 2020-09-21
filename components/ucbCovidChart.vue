@@ -1,22 +1,29 @@
 <template>
     <div class="ucb-wc-container">
-        <div class="ucb-wc-chart-container">
-            <canvas :id="option" :aria-label="'Bar chart for ' + dataOption" role="img">
-                <p> This chart describes the {{dataOption}}.  </p>
-            </canvas>
+        <div class="ucb-wc-header"> 
+            <h1> {{dataOption}} </h1>
         </div>
-        <div class="ucb-wc-stats">
-            <div class="ucb-wc-child"> <h3> {{new Date().toLocaleDateString() }} Total </h3> <p class="supersize"> {{stats.lastDayTotal}} </p> </div>
-            <div class="ucb-wc-child"> <h3> Week of {{entries.labels[0]}} Total </h3> <p class="supersize"> {{stats.weekTotal}} </p>  </div>
-            <div class="ucb-wc-child" v-if="/(On-Campus Isolation)/i.exec(dataOption)"> 
-                <h3> Utilization Rate </h3> 
-                <p class="supersize"> {{Math.floor(((stats.weekTotal/249).toFixed(2) * 100)) }} % </p> 
-                <p> of 249 Total Spaces Used </p>
+        <div class="ucb-wc-desc">
+            <p> {{description}} </p>
+        </div>
+        <div class="ucb-wc-data-container">
+            <div class="ucb-wc-chart-container">
+                <canvas :id="option" :aria-label="'Bar chart for ' + dataOption" role="img">
+                    <p> This chart describes the {{dataOption}}.  </p>
+                </canvas>
             </div>
-            <div class="ucb-wc-child" v-else> 
-                <h3> Cumulative Total </h3> 
-                <p class="supersize"> {{stats.cumulativeTotal}} </p> 
-                <p> August 24 - Present </p>
+            <div class="ucb-wc-stats">
+                <div class="ucb-wc-child" v-if="/(On-Campus Isolation)/i.exec(dataOption)"> 
+                    <h3> Utilization Rate </h3> 
+                    <p> {{Math.floor(((stats.weekTotal/249).toFixed(2) * 100)) }} % </p> 
+                    <p> of 249 Total Spaces Used </p>
+                </div>
+                <div class="ucb-wc-child" v-else> 
+                    <h3> Cumulative Total </h3> 
+                    <p> {{stats.cumulativeTotal}} </p> 
+                    <p> August 24 - Present </p>
+                </div>
+                <div class="ucb-wc-child" v-if="/(Monitoring Tests)/i.exec(dataOption)"> <h3> Totals Public Health Referrals since 8/24 </h3> <p> {{stats.weekTotal}} </p> </div>
             </div>
         </div>
     </div>
@@ -41,6 +48,7 @@ export default {
             lastDayTotal: 0,
             cumulativeTotal: 0
         });
+        const description = ref(null);
 
         // format data and render the bar chart
         // @param {data} the response to sort
@@ -115,15 +123,19 @@ export default {
             switch(props.dataOption){
                 case '# of Monitoring Tests Performed':
                     option.value = 'gsx$ofmonitoringtestsperformed';
+                    description.value = "Monitoring, also known as surveillance testing, is an important part of CU Boulder's health and safety response to COVID-19. Surveillance testing is a molecular, saliva-based PCR test that allows CU Boulder to identify potential cases of COVID-19 and inform control measures to help prevent outbreaks. Students living in a residence hall or an on-campus apartment are required to be screened once each week at a testing site near their residence hall. The appointment takes about two minutes and students are contacted via email if a diagnostic test is recommended. The university is working to expand this testing capability beyond on-campus residents.";
                     break;
                 case '# of Positive Results by Medical Services':
                     option.value = 'gsx$ofpositiveresultsbymedicalservices';
+                    description.value = "COVID-19 testing is available on campus for all students. Students with symptoms or students advised by the contact tracing team to seek testing&nbsp;can contact the Public Health Clinic&nbsp;to make an appointment for COVID-19 testing. Daily totals of PCR Diagnostic Tests administered include all tests conducted in the Public Health Clinic, not just those referred through monitoring. As part of campus monitoring and contact tracing, employees can be tested on campus if they are identified by a campus contact tracer as having been potentially exposed.";
                     break;
                 case '# of PCR Tests Completed by Medical Services':
                     option.value = 'gsx$ofpcrtestscompletedbymedicalservices';
+                    description.value = "COVID-19 testing is available on campus for all students. Students with symptoms or students advised by the contact tracing team to seek testing&nbsp;can contact the Public Health Clinic&nbsp;to make an appointment for COVID-19 testing. Daily totals of PCR Diagnostic Tests administered include all tests conducted in the Public Health Clinic, not just those referred through monitoring. As part of campus monitoring and contact tracing, employees can be tested on campus if they are identified by a campus contact tracer as having been potentially exposed.";
                     break;
                 case 'On-Campus Isolation Usage':
                     option.value ='gsx$utilizationrateofisolationspaces249';
+                    description.value = "On-campus residents with a need to isolate themselves due to a positive COVID-19 test result have the option to utilize space reserved on campus for isolation. Students receive guidance from the Public Health Clinic at CU Boulder if they are required to isolate. For more information visit the Public Health Clinic webpage. ";
                     break;
                 default:
                     // error if a possible title isnt specified
@@ -136,50 +148,60 @@ export default {
             renderChart(props.state.data);
         });
 
-        return {stats, entries, option}
+        return {stats, entries, option, description}
     }
 }
 </script>
 <style lang="scss" scoped>
-.ucb-wc-title{
-    text-align: center;
-    font-weight: bold;
-}
 .ucb-wc-container{
-    display: flex;
-    justify-content:space-between;
-    align-items: center;
-    @media screen and(max-width: $breakpoint_large){
-      flex-direction: column;
-      align-items: unset;
-    }
-}
-.ucb-wc-chart-container{
-    flex: 0 0 auto;
-    height: 360px;
-    width: 70%;
-    @media screen and(max-width: $breakpoint_large){
-        margin: auto;
-    }
-}
-.ucb-wc-stats{
+    width: 33%;
+    margin: 2px;
     display: flex;
     flex-direction: column;
+    justify-content:space-between;
 }
-
-.ucb-wc-child {
-    border: 1px solid grey;
-    min-height: 170px;
-    max-width: 300px;
-    margin-bottom: 1em;
-    text-align: center;
-    padding-top: .5em;
-    @media screen and(max-width: $breakpoint_large){
-      max-width: unset;
+.ucb-wc-container:last-child{
+    flex: 1;
+}
+.ucb-wc-header{
+    background-color: black;
+    h1{
+        color: white;
+        font-size: 1rem;
+        text-align: center;
+        padding: 6px;
+        margin: 0px;
+        height: 50px;
     }
 }
-p.supersize{
-    font-size: 320%;
-    font-weight: bold;
+
+.ucb-wc-desc{
+    background-color: $gray-light;
+    padding: 12px;
+    font-size: .75em;
+    max-height: 250px;
+}
+.ucb-wc-chart-container{
+    margin: .5em 0 .5em 0;
+    border: 1px solid grey;
+    width: 100%;
+    height: 400px;
+    flex: 0 0 auto;
+}
+.ucb-wc-data-container {
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.ucb-wc-stats {
+    display: flex;
+    justify-content: space-between;
+    .ucb-wc-child{
+        max-width: 225px;
+        margin: 6px;
+        border: 1px solid grey;
+        text-align: center;
+    }
 }
 </style>

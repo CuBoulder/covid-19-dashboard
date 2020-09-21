@@ -1,19 +1,19 @@
 <template>
     <div id="ucb-wc-layout">
         <template v-if="state.data">
-            <div class="ucb-wc-child"> 
+            <div class="ucb-wc-child ucb-wc-daily-totals"> 
                 <dailyTotals :state="state"/>
             </div>
-            <div class="ucb-wc-child"> 
+            <div class="ucb-wc-child ucb-wc-charts"> 
                 <ucbCovidChart dataOption="# of Monitoring Tests Performed" :state="state"/>
                 <ucbCovidChart dataOption="# of Positive Results by Medical Services" :state="state"/>
                 <ucbCovidChart dataOption="# of PCR Tests Completed by Medical Services" :state="state" />
                 <ucbCovidChart dataOption="On-Campus Isolation Usage" :state="state"/>
             </div>
-            <div class="ucb-wc-child"> 
+            <div class="ucb-wc-child ucb-wc-weekly-totals"> 
                 <weeklyTotals :state="state"/>
             </div>
-            <div class="ucb-wc-child"> 
+            <div class="ucb-wc-child ucb-wc-note"> 
                 <p>
                 *Note: The molecular saliva-based PCR test used for monitoring tests has the advantage of being rapid, portable, and allows a large number of daily tests. 
                 However, it has not been approved as a diagnostic test, and can yield both false positives and false negatives. 
@@ -33,6 +33,7 @@ import dailyTotals from './components/dailyTotals';
 import weeklyTotals from './components/weeklyTotals';
 
 /* 
+* Spreadsheet
 * @link https://docs.google.com/spreadsheets/d/1IF1JT4wzb38827Mklm0E2PEBnYekwN9l-Il0mChScsg/edit#gid=0
 */ 
 export default {
@@ -53,7 +54,7 @@ export default {
                 state.data = res;
                 let date = new Date().toLocaleDateString(); // mm/dd/yyyy
                 date = date.replaceAll('/', '-'); // format date to mm-dd-yyyy
-                state.today = date.slice(0, date.length-2); // truncate the last two digits
+                state.today = date.slice(0, date.length-2); // truncate the last two digits to get the mm-dd-yy
                 for(let i=0; i< res.feed.entry.length; i++){
                     if(res.feed.entry[i].gsx$date.$t === state.today){
                         state.weekOf = Math.ceil(i/7);
@@ -72,3 +73,23 @@ export default {
     components: {ucbCovidChart, dailyTotals, weeklyTotals}
 }
 </script>
+<style lang="scss" scoped>
+.ucb-wc-note{
+    background-color: $gray-light;
+    padding: 20px;
+}
+.ucb-wc-child{
+    margin-top: 1em;
+    border: 1px solid grey;
+}
+
+#ucb-wc-layout{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.ucb-wc-charts{
+    display: flex;
+    flex-wrap: wrap;
+}
+</style>
