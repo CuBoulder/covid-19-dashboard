@@ -3,7 +3,6 @@
     Totals by Week -
     <em>as of {{ state.today }}</em>
 </h1>
-<p>Testing branch setup...</p>
 <table class="ucb-weekly-table">
     <thead>
         <tr>
@@ -14,7 +13,15 @@
             <th>Positive On-Campus PCR Diagnostic Tests</th>
         </tr>
     </thead>
-    <tbody></tbody>
+    <tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
     <tfoot>
         <tr>
             <th>Grand Total</th>
@@ -39,4 +46,38 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+h1 {
+    font-size: 18px;
+    background-color: black;
+    color: white;
+    padding: 0.25em;
+}
+
+table {
+    border: none;
+    width: 100%;
+}
+
+thead,
+table th {
+    background-color: white;
+    font-size: 12px;
+    font-weight: bolder;
+    border-bottom: 1px solid #888;
+    text-align: right;
+}
+
+tbody td {
+    border: none;
+    text-align: right;
+}
+
+tfoot,
+tfoot th {
+    background-color: black;
+    color: white;
+    font-weight: bolder;
+    text-align: right;
+}
+</style>
