@@ -15,8 +15,8 @@
     </thead>
     <tbody>
         <tr>
-            <td></td>
-            <td></td>
+            <td>{{ wEntries.data[0] }}</td>
+            <td>{{ wEntries.labels[0] }}</td>
             <td></td>
             <td></td>
             <td></td>
@@ -25,7 +25,7 @@
     <tfoot>
         <tr>
             <th>Grand Total</th>
-            <th></th>
+            <th>{{foobar}}</th>
             <th></th>
             <th></th>
             <th></th>
@@ -35,13 +35,43 @@
 </template>
 
 <script>
+import {
+    onMounted,
+    reactive
+} from "vue";
 export default {
     name: "weeklyTotals",
     props: {
         state: Object,
     },
     setup(props) {
-        return;
+        const foobar = "Text Goes Here";
+        const wEntries = reactive({
+            labels: [],
+            data: [],
+        });
+
+        // load the data
+        function loadEntries(data) {
+            let {
+                weekOf,
+                weekSummary,
+                daysOnGraph,
+                index
+            } = props.state;
+
+            wEntries.data.push(25);
+            wEntries.labels.push("testing... 1,2,3");
+        }
+
+        onMounted(() => {
+            loadEntries(props.state.data);
+        });
+
+        return {
+            foobar,
+            wEntries,
+        };
     },
 };
 </script>
@@ -66,6 +96,7 @@ table th {
     font-weight: bolder;
     border-bottom: 1px solid #888;
     text-align: right;
+    padding: 2px 2px 0 0;
 }
 
 tbody td {
@@ -79,5 +110,6 @@ tfoot th {
     color: white;
     font-weight: bolder;
     text-align: right;
+    padding: 0.25em 0;
 }
 </style>
