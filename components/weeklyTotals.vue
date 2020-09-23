@@ -17,7 +17,7 @@
         <tr v-for="(curDate, index) in wEntries.dates" :key="index">
             <td>{{ curDate }}</td>
             <td>{{ wEntries.monitor[index] }}</td>
-            <td>Index is : {{ index }}</td>
+            <td></td>
             <td>{{ wEntries.pcr[index] }}</td>
             <td>{{ wEntries.positive[index] }}</td>
         </tr>
@@ -25,10 +25,10 @@
     <tfoot>
         <tr>
             <th>Grand Total</th>
-            <th>{{foobar}}</th>
+            <th>{{ monitorTotal }}</th>
             <th></th>
-            <th></th>
-            <th></th>
+            <th>{{ pcrTotal }}</th>
+            <th>{{ positiveTotal }}</th>
         </tr>
     </tfoot>
 </table>
@@ -37,7 +37,8 @@
 <script>
 import {
     onMounted,
-    reactive
+    reactive,
+    ref
 } from "vue";
 export default {
     name: "weeklyTotals",
@@ -52,6 +53,9 @@ export default {
             pcr: [],
             positive: [],
         });
+        const monitorTotal = ref(0);
+        const pcrTotal = ref(0);
+        const positiveTotal = ref(0);
 
         // load the data
         function loadEntries(data) {
@@ -66,15 +70,20 @@ export default {
 
             for (let i = 0; i < dayCount; i++) {
                 let curDate = data.feed.entry[i].gsx$date.$t;
-                wEntries.dates.push(curDate);
-                let curMonitor = data.feed.entry[i].gsx$ofmonitoringtestsperformed.$t;
-                wEntries.monitor.push(curMonitor);
-                let curPCR =
-                    data.feed.entry[i].gsx$ofpcrtestscompletedbymedicalservices.$t;
-                wEntries.pcr.push(curPCR);
-                let curPositive =
-                    data.feed.entry[i].gsx$ofpositiveresultsbymedicalservices.$t;
-                wEntries.positive.push(curPositive);
+                if (curDate.includes("WEEK")) {
+                    wEntries.dates.push(curDate);
+                    let curMonitor = data.feed.entry[i].gsx$ofmonitoringtestsperformed.$t;
+                    monitorTotal.value += Number(curMonitor);
+                    wEntries.monitor.push(curMonitor);
+                    let curPCR =
+                        data.feed.entry[i].gsx$ofpcrtestscompletedbymedicalservices.$t;
+                    pcrTotal.value += Number(curPCR);
+                    wEntries.pcr.push(curPCR);
+                    let curPositive =
+                        data.feed.entry[i].gsx$ofpositiveresultsbymedicalservices.$t;
+                    positiveTotal.value += Number(curPositive);
+                    wEntries.positive.push(curPositive);
+                }
             }
         }
 
@@ -85,6 +94,9 @@ export default {
         return {
             foobar,
             wEntries,
+            monitorTotal,
+            pcrTotal,
+            positiveTotal,
         };
     },
 };
@@ -101,12 +113,12 @@ h1 {
 table {
     border: none;
     width: 100%;
+    font-size: 12px;
 }
 
 thead,
 table th {
     background-color: white;
-    font-size: 12px;
     font-weight: bolder;
     border-bottom: 1px solid #888;
     text-align: right;
@@ -124,6 +136,12 @@ tfoot th {
     color: white;
     font-weight: bolder;
     text-align: right;
-    padding: 0.25em 0;
+    padding: 2px 2px 0 0;
+}
+
+table td:first-of-type,
+table th:first-of-type {
+    text-align: left;
+    padding-left: 1em;
 }
 </style>
