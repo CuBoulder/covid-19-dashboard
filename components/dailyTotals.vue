@@ -6,7 +6,7 @@
     <div class="daily-stats-container">
         <section v-for="item in dailyData" :key="item">
             <p>{{ item.name }}</p>
-            <h3>{{ item.data }}</h3>
+            <h3 :style="{color:item.color}">{{ item.data }}</h3>
         </section>
     </div>
     
@@ -26,19 +26,23 @@ export default {
             const dailyData = ref([
                 {
                     name: 'screening tests monitored',
-                    data: props.state.data.feed.entry[props.state.index].gsx$ofmonitoringtestsperformed.$t
+                    data: props.state.data.feed.entry[props.state.index].gsx$ofmonitoringtestsperformed.$t,
+                    color: '#cfb87c'
                 },
                 {
                     name: 'pcr diagnostic tests completed',
-                    data: props.state.data.feed.entry[props.state.index].gsx$ofpcrtestscompletedbymedicalservices.$t
+                    data: props.state.data.feed.entry[props.state.index].gsx$ofpcrtestscompletedbymedicalservices.$t,
+                    color: '#000000'
                 },
                 {
                     name: 'positive pcr diagnostic test results',
-                    data: props.state.data.feed.entry[props.state.index].gsx$ofpositiveresultsbymedicalservices.$t
+                    data: props.state.data.feed.entry[props.state.index].gsx$ofpositiveresultsbymedicalservices.$t,
+                    color: '#a6a6a6'
                 },
                 {
                     name: 'on-campus isolation spaces in use',
-                    data: props.state.data.feed.entry[props.state.index].gsx$utilizationrateofisolationspaces249.$t
+                    data: props.state.data.feed.entry[props.state.index].gsx$utilizationrateofisolationspaces249.$t,
+                    color: '#0277BD'
                 }
             ]);
 
