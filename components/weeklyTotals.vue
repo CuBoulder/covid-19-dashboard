@@ -14,12 +14,12 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <td>{{ wEntries.data[0] }}</td>
-            <td>{{ wEntries.labels[0] }}</td>
-            <td></td>
-            <td></td>
-            <td></td>
+        <tr v-for="(curDate, index) in wEntries.dates" :key="index">
+            <td>{{ curDate }}</td>
+            <td>{{ wEntries.monitor[index] }}</td>
+            <td>Index is : {{ index }}</td>
+            <td>{{ wEntries.pcr[index] }}</td>
+            <td>{{ wEntries.positive[index] }}</td>
         </tr>
     </tbody>
     <tfoot>
@@ -47,8 +47,10 @@ export default {
     setup(props) {
         const foobar = "Text Goes Here";
         const wEntries = reactive({
-            labels: [],
-            data: [],
+            dates: [],
+            monitor: [],
+            pcr: [],
+            positive: [],
         });
 
         // load the data
@@ -60,8 +62,20 @@ export default {
                 index
             } = props.state;
 
-            wEntries.data.push(25);
-            wEntries.labels.push("testing... 1,2,3");
+            let dayCount = data.feed.entry.length;
+
+            for (let i = 0; i < dayCount; i++) {
+                let curDate = data.feed.entry[i].gsx$date.$t;
+                wEntries.dates.push(curDate);
+                let curMonitor = data.feed.entry[i].gsx$ofmonitoringtestsperformed.$t;
+                wEntries.monitor.push(curMonitor);
+                let curPCR =
+                    data.feed.entry[i].gsx$ofpcrtestscompletedbymedicalservices.$t;
+                wEntries.pcr.push(curPCR);
+                let curPositive =
+                    data.feed.entry[i].gsx$ofpositiveresultsbymedicalservices.$t;
+                wEntries.positive.push(curPositive);
+            }
         }
 
         onMounted(() => {
