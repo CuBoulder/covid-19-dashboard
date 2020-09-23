@@ -71,7 +71,21 @@ export default {
             for (let i = 0; i < dayCount; i++) {
                 let curDate = data.feed.entry[i].gsx$date.$t;
                 if (curDate.includes("WEEK")) {
-                    wEntries.dates.push(curDate);
+                    let endWeek = data.feed.entry[i - 1].gsx$date.$t;
+                    let startWeek = data.feed.entry[i - 5].gsx$date.$t;
+                    // convert these from the dd-mm-yy format to dd/mm format
+                    let endWeekArray = endWeek.split("-");
+                    let startWeekArray = startWeek.split("-");
+
+                    wEntries.dates.push(
+                        startWeekArray[0] +
+                        "/" +
+                        startWeekArray[1] +
+                        " - " +
+                        endWeekArray[0] +
+                        "/" +
+                        endWeekArray[1]
+                    );
                     let curMonitor = data.feed.entry[i].gsx$ofmonitoringtestsperformed.$t;
                     monitorTotal.value += Number(curMonitor);
                     wEntries.monitor.push(curMonitor);
