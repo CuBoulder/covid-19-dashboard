@@ -61,9 +61,8 @@ export default {
         const description = ref(null);
 
         // format data and render the bar chart
-        // @param {data} the response to sort
-        function renderChart(data){
-            let {weekOf, weekSummary, daysOnGraph, index} = props.state;
+        function renderChart(){
+            let {weekOf, weekSummary, daysOnGraph, index, data} = props.state;
             let prev = (index - daysOnGraph +1);
             // only show 5 days at a time (M-F)
             for(let j=1; j<6; j++){
@@ -100,7 +99,44 @@ export default {
                 },
                 options: {
                     tooltips:{
-                        enabled: false
+                        enabled: false,
+                        custom: function(tooltipModel) {
+                            // Tooltip Element
+                            var tooltipEl = document.getElementById('chartjs-tooltip');
+                            // Create element on first render
+                            if (!tooltipEl) {
+                                tooltipEl = document.createElement('div');
+                                tooltipEl.id = 'chartjs-tooltip';
+                                document.body.appendChild(tooltipEl);
+                            }
+                            // Hide if no tooltip
+                            if (tooltipModel.opacity === 0) {
+                                tooltipEl.style.opacity = 0;
+                                return;
+                            }
+                            function getBody(bodyItem) {
+                                return bodyItem.lines;
+                            }
+                            // Set Text
+                            if (tooltipModel.body) {
+                                let i = tooltipModel.dataPoints[0].index;
+                                var innerHtml = `<div> <h4 style="font-size:1rem;"> Date: ${tooltipModel.title[0]} </h4> <h4> ${props.dataOption} : ${entries.data[i]} </h4>`;
+                                if(props.dataOption === '# of Monitoring Tests Performed'){
+                                    innerHtml += `<h4> Referred to Public Health for PCR Diagnostic Testing: ${stacked.data[i]} </h4>`;
+                                }
+                                tooltipEl.innerHTML = innerHtml + '</div>';
+                            }
+                            var position = this._chart.canvas.getBoundingClientRect();
+                            tooltipEl.style.opacity = 1;
+                            tooltipEl.style.position = 'absolute';
+                            tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                            tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                            tooltipEl.style.backgroundColor = 'white';
+                            tooltipEl.style.border = '1px solid grey';
+                            tooltipEl.style.padding = tooltipModel.yPadding + 'px ' + tooltipModel.xPadding + 'px';
+                            tooltipEl.style.pointerEvents = 'none';
+                            tooltipEl.style.fontSize = '10px';
+                        }
                     },
                     legend: {
                         display: false
@@ -161,7 +197,7 @@ export default {
         });
 
         onMounted(() => {
-            renderChart(props.state.data);
+            renderChart();
         });
 
         return {stats, entries, option, description}
@@ -228,7 +264,5 @@ h4{ font-size: .75rem;}
             width: 100%;
         }
     }
-
 }
-
 </style>
