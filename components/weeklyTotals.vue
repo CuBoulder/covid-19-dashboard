@@ -17,7 +17,7 @@
         <tr v-for="(curDate, index) in wEntries.dates" :key="index">
             <td>{{ curDate }}</td>
             <td>{{ wEntries.monitor[index] }}</td>
-            <td></td>
+            <td>{{ wEntries.referred[index] }}</td>
             <td>{{ wEntries.pcr[index] }}</td>
             <td>{{ wEntries.positive[index] }}</td>
         </tr>
@@ -26,7 +26,7 @@
         <tr>
             <th>Grand Total</th>
             <th>{{ monitorTotal }}</th>
-            <th></th>
+            <th>{{ referredTotal }}</th>
             <th>{{ pcrTotal }}</th>
             <th>{{ positiveTotal }}</th>
         </tr>
@@ -52,10 +52,12 @@ export default {
             monitor: [],
             pcr: [],
             positive: [],
+            referred: [],
         });
         const monitorTotal = ref(0);
         const pcrTotal = ref(0);
         const positiveTotal = ref(0);
+        const referredTotal = ref(0);
 
         // load the data
         function loadEntries(data) {
@@ -97,6 +99,10 @@ export default {
                         data.feed.entry[i].gsx$ofpositiveresultsbymedicalservices.$t;
                     positiveTotal.value += Number(curPositive);
                     wEntries.positive.push(curPositive);
+
+                    // fake data placeholder
+                    wEntries.referred.push(Math.floor(curPCR * 0.35));
+                    referredTotal.value += Math.floor(curPCR * 0.35);
                 }
             }
         }
@@ -111,6 +117,7 @@ export default {
             monitorTotal,
             pcrTotal,
             positiveTotal,
+            referredTotal,
         };
     },
 };
@@ -150,7 +157,7 @@ tfoot th {
     color: white;
     font-weight: bolder;
     text-align: right;
-    padding: 2px 2px 0 0;
+    padding: 0.75em 0.5em;
 }
 
 table td:first-of-type,
