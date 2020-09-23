@@ -5,10 +5,10 @@
                 <dailyTotals :state="state"/>
             </div>
             <div class="ucb-wc-child ucb-wc-charts"> 
-                <ucbCovidChart dataOption="# of Monitoring Tests Performed" :state="state"/>
-                <ucbCovidChart dataOption="# of Positive Results by Medical Services" :state="state"/>
-                <ucbCovidChart dataOption="# of PCR Tests Completed by Medical Services" :state="state" />
-                <ucbCovidChart dataOption="On-Campus Isolation Usage" :state="state"/>
+                <ucbCovidChart dataOption="# of Monitoring Tests Performed" :state="state" color="#cfb87c"/>
+                <ucbCovidChart dataOption="# of Positive Results by Medical Services" :state="state" color="#000000"/>
+                <ucbCovidChart dataOption="# of PCR Tests Completed by Medical Services" :state="state" color="#a6a6a6"/>
+                <ucbCovidChart dataOption="On-Campus Isolation Usage" :state="state" color="#0277BD"/>
             </div>
             <div class="ucb-wc-child ucb-wc-weekly-totals"> 
                 <weeklyTotals :state="state"/>
@@ -45,7 +45,8 @@ export default {
             weekOf: 0,
             daysOnGraph: 0,
             today: null,
-            index: 0
+            index: 0,
+            publicHealthReferrals: [1,2,3,4,5]
         });
         onBeforeMount(()=> {
             fetch('https://spreadsheets.google.com/feeds/list/1IF1JT4wzb38827Mklm0E2PEBnYekwN9l-Il0mChScsg/1/public/values?alt=json')
@@ -80,7 +81,6 @@ export default {
 }
 .ucb-wc-child{
     margin-top: 1em;
-    border: 1px solid grey;
 }
 
 #ucb-wc-layout{
@@ -88,8 +88,4 @@ export default {
     margin-bottom: 1em;
 }
 
-.ucb-wc-charts{
-    display: flex;
-    flex-wrap: wrap;
-}
 </style>
