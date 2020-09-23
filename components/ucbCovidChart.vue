@@ -13,17 +13,21 @@
                 </canvas>
             </div>
             <div class="ucb-wc-stats">
-                <div class="ucb-wc-child" v-if="/(On-Campus Isolation)/i.exec(dataOption)"> 
-                    <h3> Utilization Rate </h3> 
-                    <p> {{Math.floor(((stats.weekTotal/249).toFixed(2) * 100)) }} % </p> 
-                    <p> of 249 Total Spaces Used </p>
+                <div class="ucb-wc-child" v-if="/(On-Campus Isolation)/i.exec(dataOption)" :style="{borderColor: color }"> 
+                    <h3> Utilization Rate </h3>
+                    <h4> (Since September 22, 2020) </h4>
+                    <p :style="{color: color}" class="supersize"> {{Math.floor(((stats.weekTotal/249).toFixed(2) * 100)) }} % </p> 
                 </div>
-                <div class="ucb-wc-child" v-else> 
-                    <h3> Cumulative Total </h3> 
-                    <p> {{stats.cumulativeTotal}} </p> 
-                    <p> August 24 - Present </p>
+                <div class="ucb-wc-child" v-else :style="{borderColor: color }"> 
+                    <h3> Cumulative Total </h3>
+                    <h4> (Since August 24, 2020)</h4>
+                    <p :style="{color: color}" class="supersize"> {{stats.cumulativeTotal}} </p> 
                 </div>
-                <div class="ucb-wc-child" v-if="/(Monitoring Tests)/i.exec(dataOption)"> <h3> Totals Public Health Referrals since 8/24 </h3> <p> {{stats.weekTotal}} </p> </div>
+                <div class="ucb-wc-child" v-if="/(Monitoring Tests)/i.exec(dataOption)" style="borderColor: #2E7D32;"> 
+                    <h3> Totals Public Health Referrals </h3>
+                    <h4> (Since August 24, 2020) </h4> 
+                    <p style="color: #2E7D32;" class="supersize"> {{stats.weekTotal}} </p> 
+                </div>
             </div>
         </div>
     </div>
@@ -36,6 +40,7 @@ export default {
     props:{
         dataOption: String,
         state: Object,
+        color: String
     },
     setup(props){
         const option = ref(null);
@@ -47,6 +52,11 @@ export default {
             weekTotal: 0,
             lastDayTotal: 0,
             cumulativeTotal: 0
+        });
+        const stacked = reactive({
+            data: [0,0,0,0,0],
+            backgroundColor: '#2E7D32',
+            borderWidth: 1
         });
         const description = ref(null);
 
@@ -82,13 +92,16 @@ export default {
                 type: 'bar',
                 data: {
                     labels: entries.labels, //always 5 days at time
-                    datasets: [{
+                    datasets: [ stacked ,{
                         data: entries.data,
-                        backgroundColor: 'rgba(207, 184, 124, 1)',
+                        backgroundColor: props.color,
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    tooltips:{
+                        enabled: false
+                    },
                     legend: {
                         display: false
                     },
@@ -100,13 +113,15 @@ export default {
                             scaleLabel:{
                                 display: true,
                                 labelString: props.dataOption
-                            }
+                            },
+                            stacked: true
                         }],
                         xAxes:[{
                             scaleLabel:{
                                 display: true,
                                 labelString: '5 Day M-F'
-                            }
+                            },
+                            stacked: true
                         }]
                     },
                     title:{
@@ -123,6 +138,7 @@ export default {
             switch(props.dataOption){
                 case '# of Monitoring Tests Performed':
                     option.value = 'gsx$ofmonitoringtestsperformed';
+                    stacked.data = props.state.publicHealthReferrals;
                     description.value = "Monitoring, also known as surveillance testing, is an important part of CU Boulder's health and safety response to COVID-19. Surveillance testing is a molecular, saliva-based PCR test that allows CU Boulder to identify potential cases of COVID-19 and inform control measures to help prevent outbreaks. Students living in a residence hall or an on-campus apartment are required to be screened once each week at a testing site near their residence hall. The appointment takes about two minutes and students are contacted via email if a diagnostic test is recommended. The university is working to expand this testing capability beyond on-campus residents.";
                     break;
                 case '# of Positive Results by Medical Services':
@@ -153,8 +169,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+p{margin: 0px;}
+h3{font-size: 100%;}
+h4{ font-size: .75rem;}
 .ucb-wc-container{
-    width: 33%;
     margin: 2px;
     display: flex;
     flex-direction: column;
@@ -183,25 +201,34 @@ export default {
 }
 .ucb-wc-chart-container{
     margin: .5em 0 .5em 0;
-    border: 1px solid grey;
-    width: 100%;
-    height: 400px;
+    height: 350px;
     flex: 0 0 auto;
 }
 .ucb-wc-data-container {
     display: flex;
-    flex-wrap: wrap;
-
-}
-
-.ucb-wc-stats {
-    display: flex;
-    justify-content: space-between;
+    align-items: center;
+    .ucb-wc-chart-container{
+        width: 80%;
+    }
+    .ucb-wc-stats{
+        width: 30%;
+    }
     .ucb-wc-child{
-        max-width: 225px;
-        margin: 6px;
         border: 1px solid grey;
+        margin: 1em;
+        padding: .25em;
         text-align: center;
     }
+    @media (max-width:$breakpoint_xlarge){
+        flex-wrap: wrap;
+        .ucb-wc-stats{
+            width: 100%;
+        }
+        .ucb-wc-chart-container{
+            width: 100%;
+        }
+    }
+
 }
+
 </style>
